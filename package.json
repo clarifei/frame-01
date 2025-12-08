@@ -30,6 +30,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "@welldone-software/why-did-you-render": "^10.0.1",
     "lint-staged": "^16.2.7",
+    "react-grab": "^0.0.74",
     "taze": "^19.9.2",
     "typescript": "~5.8.3",
     "ultracite": "6.3.10",
