@@ -1,1 +1,1 @@
-Never Generate Another Web Instantly
+never generate another web instantly
