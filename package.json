@@ -1,0 +1,43 @@
+{
+  "name": "ngawi-starter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-router": "^1.140.0",
+    "@tauri-apps/api": "^2.9.1",
+    "@tauri-apps/plugin-opener": "^2.5.2",
+    "million": "^3.1.11",
+    "react": "^19.1.2",
+    "react-dom": "^19.1.2",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.8",
+    "@tanstack/router-plugin": "^1.140.0",
+    "@tauri-apps/cli": "^2.9.5",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@welldone-software/why-did-you-render": "^10.0.1",
+    "lint-staged": "^16.2.7",
+    "taze": "^19.9.2",
+    "typescript": "~5.8.3",
+    "ultracite": "6.3.10",
+    "vite": "^7.2.7"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
+      "bun x ultracite fix"
+    ]
+  }
+}
