@@ -1,6 +1,27 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![cfg_attr(
+  all(not(debug_assertions), target_os = "windows"),
+  windows_subsystem = "windows"
+)]
+
+use frame_lib::commands;
+use tauri_plugin_prevent_default::Flags;
 
 fn main() {
-    ngawi_starter_lib::run()
+  tauri::Builder::default()
+    .plugin(tauri_plugin_http::init())
+    .plugin(tauri_plugin_opener::init())
+    .plugin(
+      tauri_plugin_prevent_default::Builder::new()
+        .with_flags(Flags::all().difference(Flags::RELOAD))
+        .build(),
+    )
+    .setup(|app| {
+      frame_lib::setup::init(app)?;
+      Ok(())
+    })
+    .invoke_handler(tauri::generate_handler![
+      commands::show_window,
+    ])
+    .run(tauri::generate_context!())
+    .expect("Failed to run Tauri application");
 }
