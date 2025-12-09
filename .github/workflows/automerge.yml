@@ -1,0 +1,48 @@
+name: Dependabot Auto-merge
+
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+  contents: write
+  actions: read
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Normalize PR Title (COMMIT.md standard)
+        run: |
+          PR_TITLE=$(gh pr view "$PR_URL" --json title -q .title)
+          NEW_TITLE=$(echo "$PR_TITLE" | sed -E 's/(chore\(deps\): )Bump/\1bump/')
+
+          if [[ "$PR_TITLE" != "$NEW_TITLE" ]]; then
+            echo "Updating PR title to: $NEW_TITLE"
+            gh pr edit "$PR_URL" --title "$NEW_TITLE"
+          fi
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-merge Dependabot PR (non-major)
+        if: ${{ steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major' }}
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment for major upgrade
+        if: ${{ steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major' }}
+        run: |
+          gh pr comment "$PR_URL" --body "Major dependency update detected. Manual review required."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
