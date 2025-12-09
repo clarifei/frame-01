@@ -66,7 +66,7 @@ export function useShowWindow() {
 
 export function useLoadTime() {
   const [time, setTime] = useState<number | null>(loadTime);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (loadTime !== null) {
@@ -77,11 +77,17 @@ export function useLoadTime() {
     intervalRef.current = setInterval(() => {
       if (loadTime !== null) {
         setTime(loadTime);
-        clearInterval(intervalRef.current);
+        if (intervalRef.current !== null) {
+          clearInterval(intervalRef.current);
+        }
       }
     }, 10);
 
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, []);
 
   return time;
