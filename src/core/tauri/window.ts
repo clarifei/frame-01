@@ -1,7 +1,9 @@
 import { useMount } from "@reactuses/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { invokeSilent } from "./invoke";
+
+let loadTime: number | null = null;
 
 const appWindow = getCurrentWindow();
 
@@ -49,6 +51,7 @@ export function useShowWindow() {
   useMount(() => {
     const showWindow = () => {
       requestAnimationFrame(() => {
+        loadTime = Math.round(performance.now());
         invokeSilent("show_window");
       });
     };
@@ -59,4 +62,27 @@ export function useShowWindow() {
       window.addEventListener("load", showWindow, { once: true });
     }
   });
+}
+
+export function useLoadTime() {
+  const [time, setTime] = useState<number | null>(loadTime);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  useEffect(() => {
+    if (loadTime !== null) {
+      setTime(loadTime);
+      return;
+    }
+
+    intervalRef.current = setInterval(() => {
+      if (loadTime !== null) {
+        setTime(loadTime);
+        clearInterval(intervalRef.current);
+      }
+    }, 10);
+
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
+  return time;
 }
