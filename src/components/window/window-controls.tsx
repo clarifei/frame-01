@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { MultiBorder } from "@/components/ui/multi-border";
 import { useLoadTime } from "@/core/tauri/window";
 
 type WindowControlsProps = {
@@ -8,36 +8,20 @@ type WindowControlsProps = {
 
 export function WindowControls({ className, children }: WindowControlsProps) {
   const loadTime = useLoadTime();
-  const [rightOffset, setRightOffset] = useState(0);
-
-  const updateOffset = useCallback(() => {
-    const minBtn = document.getElementById("frame-tb-minimize");
-    if (minBtn) {
-      const rect = minBtn.getBoundingClientRect();
-      setRightOffset(window.innerWidth - rect.left);
-    }
-  }, []);
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(updateOffset);
-    window.addEventListener("resize", updateOffset);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", updateOffset);
-    };
-  }, [updateOffset]);
 
   return (
-    <div
-      className={`relative z-10 flex h-[33px] select-none items-center justify-between border-b ${className ?? ""}`}
+    <MultiBorder
+      className={`relative z-10 flex h-[33px] select-none items-center justify-between bg-sidebar ${className ?? ""}`}
+      colors={["var(--border)", "#0e0e11"]}
       data-tauri-drag-region
+      directions={["bottom"]}
     >
       <div className="pointer-events-none flex items-center gap-2 px-3">
         <span className="font-medium text-foreground text-xs">FRAME-01</span>
       </div>
       <div
         className="flex items-center justify-end gap-2"
-        style={{ marginRight: rightOffset }}
+        style={{ marginRight: "var(--tauri-frame-controls-width)" }}
       >
         {loadTime !== null && (
           <span className="pointer-events-none font-mono text-foreground/50 text-xs">
@@ -46,6 +30,6 @@ export function WindowControls({ className, children }: WindowControlsProps) {
         )}
         {children}
       </div>
-    </div>
+    </MultiBorder>
   );
 }
