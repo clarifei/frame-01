@@ -1,8 +1,9 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
+
 import { WindowControls } from "@/components/window/window-controls";
 import { useShowWindow } from "@/core/tauri/window";
 
-function RootComponent() {
+const RootComponent = () => {
   useShowWindow();
 
   return (
@@ -15,7 +16,7 @@ function RootComponent() {
       </div>
     </div>
   );
-}
+};
 
 export const Route = createRootRoute({
   component: RootComponent,

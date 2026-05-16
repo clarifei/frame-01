@@ -11,12 +11,8 @@ fn main() {
   tauri::Builder::default()
     .plugin(
         FramePluginBuilder::new()
-            .titlebar_height(32)
-            .button_width(56)
             .auto_titlebar(true)
-            .snap_overlay_delay_ms(15)
-            .close_hover_bg("rgba(196,43,28,1)")
-            .button_hover_bg("rgba(255,255,255,0.1)")
+            .button_width(56)
             .build()
     )
     .plugin(tauri_plugin_http::init())

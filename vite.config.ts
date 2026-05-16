@@ -1,39 +1,43 @@
-import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
-import million from "million/compiler";
 import { defineConfig } from "vite";
 
 const host = process.env.TAURI_DEV_HOST;
+const __dirname = import.meta.dirname;
 
-export default defineConfig(async () => ({
+export default defineConfig(() => ({
+  clearScreen: false,
   plugins: [
-    million.vite({ auto: true }),
     tanstackRouter({
-      target: "react",
       autoCodeSplitting: true,
+      target: "react",
     }),
-    react(),
+    react({
+      babel: {
+        plugins: [["babel-plugin-react-compiler"]],
+      },
+    }),
     tailwindcss(),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": fileURLToPath(new URL("src", import.meta.url)),
     },
   },
-  clearScreen: false,
   server: {
-    port: 1420,
-    strictPort: true,
-    host,
     hmr: host
       ? {
-          protocol: "ws",
           host,
           port: 1421,
+          protocol: "ws",
         }
       : undefined,
+    host,
+    port: 1420,
+    strictPort: true,
     watch: {
       ignored: ["**/src-tauri/**"],
     },
