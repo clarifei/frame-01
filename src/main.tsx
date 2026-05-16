@@ -1,28 +1,31 @@
-import "./wdyr";
 import "./main.css";
-import "@fontsource-variable/geist";
-import "@fontsource-variable/geist-mono";
+import { useEventListener, usePreferredDark } from "@reactuses/core";
 import ReactDOM from "react-dom/client";
+
 import { Providers } from "./app/providers";
 
-const applyTheme = (dark: boolean) => {
-  document.documentElement.classList.toggle("dark", dark);
+const ThemeSync = () => {
+  const isDark = usePreferredDark();
+
+  document.documentElement.classList.toggle("dark", isDark);
+
+  useEventListener(
+    "keydown",
+    (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+      }
+    },
+    document,
+    { capture: true }
+  );
+
+  return null;
 };
 
-const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-applyTheme(mediaQuery.matches);
-mediaQuery.addEventListener("change", (e) => applyTheme(e.matches));
-
-document.addEventListener(
-  "keydown",
-  (e) => {
-    if (e.key === "Tab") {
-      e.preventDefault();
-    }
-  },
-  { capture: true }
-);
-
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Providers />
+ReactDOM.createRoot(document.querySelector("#root") as HTMLElement).render(
+  <>
+    <ThemeSync />
+    <Providers />
+  </>
 );
